@@ -35,10 +35,7 @@ else:
         try:
             if requist == 0 :
                 service = socket.getservbyport(p)
-                print(f"""
-            PORT    STATE   SERVICE
-            {p}     open    {service}
-                """)
+                print(f"\033[0;34mPORT  \033[0;37m{p}  \033[0;34mSTATE  \033[0;37mopen  \033[0;34mSERVICE  \033[0;37m{service}")
         except:
             continue
-#end .^_^.
+#end
