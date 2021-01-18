@@ -2,11 +2,9 @@
 
 Instructions to run the tool
 
-$ cd Port-Scan-Tool
-$ chmod +x ScanManPort.py
-$ python3 ScanManPort.py
+$ cd Port-Scan-Tool && chmod +x ScanManPort.py && python3 ScanManPort.py
 
-Use -h to ask for help
+Use -h to ask for help\n
 
 
 Options:
