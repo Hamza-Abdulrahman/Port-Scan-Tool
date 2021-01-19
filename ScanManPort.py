@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import socket
+import sys
 import time
 import enumeration
 from optparse import *
@@ -12,10 +13,12 @@ parser = OptionParser("""
     github: https://github.com/Hamza-Abdulrahman/
 
 Use -h to ask for help
-""")
+""",version="ScanManPort 1.0")
+
 parser.add_option("-i","--target",dest="target",type="string",help="Enter your target")
 parser.add_option("-p","--ports",dest="ports",default="1-1024",help="Enter the Range of Ports that you want to check it Ex(1-1024)")
 parser.add_option("-t","--timeout",dest="timeout",default=0.5,help="Enter the Time Out that you want")
+parser.add_option("-v","--software-version",action="store_true",dest="software_version",default=False,help="Get Softwares version")
 
 (options,args) = parser.parse_args()
 
@@ -42,20 +45,21 @@ else:
             if request == 0 :
                 service = enumeration.get_service_name(p)
                 print(f"\033[0;34mPORT  \033[0;37m{p}  \033[0;34mSTATE  \033[0;37mopen  \033[0;34m",end='')
-                print(f"SERVICE  \033[0;37m{service}")
+                print(f"SERVICE  \033[0;37m{service}",end = '')
+                if options.software_version:
+                    version = enumeration.get_service_version(s,target,p)
+                    print(f"  \033[0;34mVERSION  \033[0;37m{version}",end='')
+                print()
         
         except KeyboardInterrupt:
             print("Stop the Scanning")
+            sys.exit(1)
 
         except:
             continue
 
         finally:
             s.close()
-#end 
 
-
-
-
-
+print("\nScan completed successfully")
 
