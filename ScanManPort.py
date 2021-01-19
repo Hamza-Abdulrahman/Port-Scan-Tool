@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
 import socket
-from optparse import *
 import time
+import enumeration
+from optparse import *
 
 parser = OptionParser("""
 \033[1;33m This is a simple tool that enables you to check the activated services
@@ -13,29 +14,48 @@ parser = OptionParser("""
 Use -h to ask for help
 """)
 parser.add_option("-i","--target",dest="target",type="string",help="Enter your target")
-parser.add_option("-p","--ports",dest="ports",type="int",help="Enter the last IP you want to check")
-parser.add_option("-t","--outtime",dest="out_time",type="int",help="Enter the Out Time you want")
+parser.add_option("-p","--ports",dest="ports",default="1-1024",help="Enter the Range of Ports that you want to check it Ex(1-1024)")
+parser.add_option("-t","--timeout",dest="timeout",default=0.5,help="Enter the Time Out that you want")
 
 (options,args) = parser.parse_args()
 
-if options.target == None or options.ports == None or options.out_time == None:
+if not options.target or (not options.ports or not options.timeout and not options.target):
     print(parser.usage)
 else:
     print("Starting ScanManPort 2021 ......")
     time.sleep(2)
     target = str(options.target)
-    ports = int(options.ports)
-    print(f"Host: {target}")
-    for p in range(1,ports):
-        
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        out_time = int(options.out_time)
-        s.settimeout(out_time)
-        requist = s.connect_ex((target,p))
+    if '-' in options.ports:
+        start_range , end_range = str(options.ports).split("-")
+    else:
+        start_range = end_range = options.ports
+    
+    print(f"Host: {target}\n")
+    
+    for p in range(int(start_range),int(end_range)+1):
         try:
-            if requist == 0 :
-                service = socket.getservbyport(p)
-                print(f"\033[0;34mPORT  \033[0;37m{p}  \033[0;34mSTATE  \033[0;37mopen  \033[0;34mSERVICE  \033[0;37m{service}")
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            timeout = float(options.timeout)
+            s.settimeout(timeout)
+            request = s.connect_ex((target,p))
+
+            if request == 0 :
+                service = enumeration.get_service_name(p)
+                print(f"\033[0;34mPORT  \033[0;37m{p}  \033[0;34mSTATE  \033[0;37mopen  \033[0;34m",end='')
+                print(f"SERVICE  \033[0;37m{service}")
+        
+        except KeyboardInterrupt:
+            print("Stop the Scanning")
+
         except:
             continue
-#end
+
+        finally:
+            s.close()
+#end 
+
+
+
+
+
+
